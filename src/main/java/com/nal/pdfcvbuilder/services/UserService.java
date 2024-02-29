@@ -11,7 +11,8 @@ public interface UserService {
 
     List<UserResponse> getUsers();
 
-    User mapUserRequestToUser( User user, UserRequest userRequest);
+    User mapUserRequestToUser(User user, UserRequest userRequest);
+
     UserResponse mapUserToUserResponse(User user);
 
     UserResponse updateUser(Long userId, UserRequest userRequest);
