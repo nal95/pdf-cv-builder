@@ -15,7 +15,7 @@ import java.util.Set;
 public class TechnicalExperience implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private TechnicalTopic topic;
+    private String topic; // example: PROGRAMMING, FRAMEWORK, DATABASE, CLOUD
     private Set<Detail> details;
 }
 

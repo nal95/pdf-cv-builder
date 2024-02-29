@@ -5,15 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CVData implements Serializable {
     private static final long serialVersionUID = 1L;
-    private List<Network> networks;
-    private List<Education> educations;
-    private List<WorkExperience> workExperiences;
-    private List<TechnicalExperience> technicalExperiences;
+    private Set<Network> networks;
+    private Set<Education> educations;
+    private Set<WorkExperience> workExperiences;
+    private Set<TechnicalExperience> technicalExperiences;
+    private Set<String> tools;
+    private Set<String> methodologies;
+    private Set<String> skills;
 }
