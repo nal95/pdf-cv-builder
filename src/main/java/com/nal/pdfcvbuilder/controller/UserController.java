@@ -4,22 +4,28 @@ import com.nal.pdfcvbuilder.DTOs.UserRequest;
 import com.nal.pdfcvbuilder.DTOs.UserResponse;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.ResourceAlreadyExistsException;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.UserNotFoundException;
+import com.nal.pdfcvbuilder.services.ImageService;
 import com.nal.pdfcvbuilder.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private final String SAVING_IMAGE_ERROR_MESSAGE = "Error saving image";
 
     private final UserService service;
+    private final ImageService imageService;
 
-    public UserController(UserService service) {
+    public UserController(UserService service, ImageService imageService) {
         this.service = service;
+        this.imageService = imageService;
     }
 
     @GetMapping
@@ -75,4 +81,40 @@ public class UserController {
             return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
         }
     }
+
+    @PostMapping("/uploadImage")
+    public ResponseEntity<Object> handleImageUpload(@RequestParam("file") MultipartFile file) {
+        try {
+            String imagePath = imageService.saveImage(file);
+            // Save imagePath in the user entity and update the database
+            // ...
+            return ResponseEntity.ok("{'message':'Image uploaded successfully', 'imagePath':'imagePath'}");
+        } catch (IOException e) {
+            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.INTERNAL_SERVER_ERROR, SAVING_IMAGE_ERROR_MESSAGE).build();
+
+            return new ResponseEntity<>(errorResponse,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
+
+//@RestController
+//@RequestMapping("/api/users")
+//public class UserController {
+//    @Autowired
+//    private UserService userService;
+//
+//    @Autowired
+//    private ImageService imageService;
+//
+//    @PostMapping("/uploadImage")
+//    public ResponseEntity<String> handleImageUpload(@RequestParam("file") MultipartFile file) {
+//        try {
+//            String imagePath = imageService.saveImage(file);
+//            // Save imagePath in the user entity and update the database
+//            // ...
+//            return ResponseEntity.ok("Image uploaded successfully");
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image");
+//        }
+//    }
+//}
