@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:cvs
+    driverClassName: org.h2.Driver
+  jpa:
+    show-sql: true
+    database: h2
+    hibernate:
+      ddl-auto: update
+
+  h2:
+    console:
+      enabled: true
+
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    user: sa
+    baseline-description: init
+    baseline-version: 1
+
+server:
+  servlet:
+    context-path: /api/v1/pdf-cv
+
+app:
+  image:
+    base-path: src/main/resources
+    upload-path: images
