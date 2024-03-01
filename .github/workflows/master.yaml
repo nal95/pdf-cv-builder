@@ -1,4 +1,4 @@
-name: "Dev Workflow"
+name: "Master Workflow"
 on:
   pull_request:
     branches:
