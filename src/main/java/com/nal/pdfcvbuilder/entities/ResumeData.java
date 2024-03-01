@@ -10,7 +10,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CVData implements Serializable {
+public class ResumeData implements Serializable {
     private static final long serialVersionUID = 1L;
     private Set<Network> networks;
     private Set<Education> educations;

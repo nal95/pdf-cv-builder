@@ -1,9 +1,7 @@
 package com.nal.pdfcvbuilder.entities;
 
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 @Getter
 @Setter
@@ -39,8 +37,7 @@ public class User {
     @Column(name = "relevant_experience_years")
     private int years;
 
-    @Column(columnDefinition = "json")
-    @Type(JsonType.class)
-    private CVData data;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Resume resume;
 }
 
