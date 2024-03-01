@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final String SAVING_IMAGE_ERROR_MESSAGE = "Error saving image";
 
     private final UserService service;
     private final ImageService imageService;
@@ -38,8 +37,11 @@ public class UserController {
         try {
             UserResponse user = service.getUser(userId);
             return new ResponseEntity<>(user, HttpStatus.OK);
+
         } catch (UserNotFoundException e) {
-            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND, e.getMessage()).build();
+            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND,
+                    e.getMessage()).build();
+
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         }
     }
@@ -49,8 +51,11 @@ public class UserController {
         try {
             UserResponse updatedUser = service.updateUser(userId, userRequest);
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+
         } catch (UserNotFoundException e) {
-            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND, e.getMessage()).build();
+            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND,
+                    e.getMessage()).build();
+
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         }
     }
@@ -62,11 +67,15 @@ public class UserController {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } else {
                 String message = "User with ID " + userId + " not found";
-                ErrorResponse errorResponse = ErrorResponse.builder(new UserNotFoundException(message), HttpStatus.NOT_FOUND, "User not found").build();
+
+                ErrorResponse errorResponse = ErrorResponse.builder(new UserNotFoundException(message),
+                        HttpStatus.NOT_FOUND, "User not found").build();
+
                 return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()).build();
+
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -76,8 +85,10 @@ public class UserController {
         try {
             UserResponse createdUser = service.createUser(userRequest);
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+
         } catch (ResourceAlreadyExistsException e) {
             ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.CONFLICT, e.getMessage()).build();
+
             return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
         }
     }
@@ -89,32 +100,13 @@ public class UserController {
             // Save imagePath in the user entity and update the database
             // ...
             return ResponseEntity.ok("{'message':'Image uploaded successfully', 'imagePath':'imagePath'}");
-        } catch (IOException e) {
-            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.INTERNAL_SERVER_ERROR, SAVING_IMAGE_ERROR_MESSAGE).build();
 
-            return new ResponseEntity<>(errorResponse,HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IOException e) {
+            String SAVING_IMAGE_ERROR_MESSAGE = "Error saving image";
+            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.INTERNAL_SERVER_ERROR,
+                    SAVING_IMAGE_ERROR_MESSAGE).build();
+
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
-
-//@RestController
-//@RequestMapping("/api/users")
-//public class UserController {
-//    @Autowired
-//    private UserService userService;
-//
-//    @Autowired
-//    private ImageService imageService;
-//
-//    @PostMapping("/uploadImage")
-//    public ResponseEntity<String> handleImageUpload(@RequestParam("file") MultipartFile file) {
-//        try {
-//            String imagePath = imageService.saveImage(file);
-//            // Save imagePath in the user entity and update the database
-//            // ...
-//            return ResponseEntity.ok("Image uploaded successfully");
-//        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image");
-//        }
-//    }
-//}

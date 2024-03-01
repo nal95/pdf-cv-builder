@@ -6,6 +6,7 @@ import com.nal.pdfcvbuilder.DTOs.UserResponse;
 import com.nal.pdfcvbuilder.entities.CVData;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.ResourceAlreadyExistsException;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.UserNotFoundException;
+import com.nal.pdfcvbuilder.services.ImageService;
 import com.nal.pdfcvbuilder.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ class UserControllerIntegrationTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private ImageService imageService;
 
     @Autowired
     private ObjectMapper objectMapper;
