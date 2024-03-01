@@ -1,6 +1,6 @@
 package com.nal.pdfcvbuilder.DTOs;
 
-import com.nal.pdfcvbuilder.entities.CVData;
+import com.nal.pdfcvbuilder.entities.ResumeData;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +21,5 @@ public class UserRequest {
     private String mobile;
     private String image;
     private int years;
-    private CVData data;
+    private ResumeData data;
 }
