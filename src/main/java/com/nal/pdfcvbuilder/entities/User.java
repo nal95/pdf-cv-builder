@@ -32,6 +32,8 @@ public class User {
 
     @Column(name = "mobile_phone_number")
     private String mobile;
+
+    @Column(name = "image_path")
     private String image;
 
     @Column(name = "relevant_experience_years")

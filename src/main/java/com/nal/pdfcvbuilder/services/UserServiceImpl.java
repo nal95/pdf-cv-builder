@@ -7,6 +7,7 @@ import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.ResourceAlreadyExistsExceptio
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.UserNotFoundException;
 import com.nal.pdfcvbuilder.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserResponse createUser(UserRequest userRequest) {
 
         if (repository.existsByEmail(userRequest.getEmail())) {
