@@ -2,7 +2,6 @@ package com.nal.pdfcvbuilder.services;
 
 import com.nal.pdfcvbuilder.DTOs.UserRequest;
 import com.nal.pdfcvbuilder.DTOs.UserResponse;
-import com.nal.pdfcvbuilder.entities.CVData;
 import com.nal.pdfcvbuilder.entities.User;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.ResourceAlreadyExistsException;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.UserNotFoundException;
@@ -12,12 +11,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -31,6 +32,9 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private ModelMapper modelMapper;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -42,6 +46,10 @@ class UserServiceImplTest {
 
         // When -  action or the behaviour that we are going test
         given(userRepository.existsByEmail(userRequest.getEmail())).willReturn(false);
+        given(modelMapper.map(any(UserRequest.class), eq(User.class))).willReturn(user);
+        given(modelMapper.map(any(User.class), eq(UserResponse.class))).willReturn(createUserResponse());
+
+        user.setId(1L);
         given(userRepository.save(any(User.class))).willReturn(user);
 
         UserResponse createdUser = userService.createUser(userRequest);
@@ -55,28 +63,36 @@ class UserServiceImplTest {
     public void createUser_WithExistingEmail_ShouldThrowException() {
         // Given
         UserRequest userRequest = createUserRequest();
+        String exceptionMessage = "User with email " + userRequest.getEmail() + " already exists";
 
         // When -  action or the behaviour that we are going test
         given(userRepository.existsByEmail(anyString())).willReturn(true);
 
-        ResourceAlreadyExistsException exception = assertThrows(ResourceAlreadyExistsException.class, () ->
-                userService.createUser(userRequest)
-        );
-
         // Then
+        ResourceAlreadyExistsException exception = assertThrows(
+                ResourceAlreadyExistsException.class, () -> userService.createUser(userRequest));
+
         verify(userRepository, never()).save(any(User.class));
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
     public void getUsers_ShouldReturnListOfUserResponses() {
+
+        //Given
+        User user = createUser();
+        user.setId(1L);
+
         // When -  action or the behaviour that we are going test
-        given(userRepository.findAll()).willReturn(Collections.singletonList(createUser()));
+        given(userRepository.findAll()).willReturn(Collections.singletonList(user));
+        given(modelMapper.map(any(User.class), eq(UserResponse.class))).willReturn(createUserResponse());
 
         List<UserResponse> userList = userService.getUsers();
 
         // Then
         assertThat(userList).isNotNull();
         assertThat(userList).hasSize(1);
+        assertEquals(user.getEmail(), userList.get(0).getEmail());
     }
 
     @Test
@@ -99,14 +115,15 @@ class UserServiceImplTest {
         userRequest.setFirstName("Jack");
         userRequest.setLastName("Brown");
         User user = createUser();
+        UserResponse userResponse = createUserResponse();
+        userResponse.setEmail("new@email.de");
+        userResponse.setFirstName("Jack");
+        userResponse.setLastName("Brown");
 
         // When -  action or the behaviour that we are going test
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
         given(userRepository.save(user)).willReturn(user);
-
-        user.setEmail("new@email.de");
-        user.setFirstName("Jack");
-        user.setLastName("Brown");
+        given(modelMapper.map(any(User.class), eq(UserResponse.class))).willReturn(userResponse);
 
         UserResponse updatedUser = userService.updateUser(1L, userRequest);
 
@@ -121,12 +138,15 @@ class UserServiceImplTest {
     public void updateUser_WithNonExistingUserId_ShouldThrowException() {
         // Given
         UserRequest userRequest = createUserRequest();
+        long userId = 1L;
+        String exceptionMessage = "User with ID " + userId + " not found";
 
         // When -  action or the behaviour that we are going test
-        given(userRepository.findById(1L)).willReturn(Optional.empty());
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
 
         // Then
-        assertThrows(UserNotFoundException.class, () -> userService.updateUser(1L, userRequest));
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> userService.updateUser(userId, userRequest));
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
@@ -143,10 +163,19 @@ class UserServiceImplTest {
 
     private User createUser() {
         return User.builder()
-                .id(1L)
                 .firstName("John")
                 .lastName("Doe")
                 .email("john.doe@example.com")
+                .build();
+    }
+
+    private UserResponse createUserResponse() {
+        return UserResponse.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .profession("Developer")
+                .image("image.png")
                 .build();
     }
 
@@ -164,7 +193,6 @@ class UserServiceImplTest {
                 .mobile("123456789")
                 .image("image.png")
                 .years(5)
-                .data(new CVData())
                 .build();
     }
 
