@@ -3,10 +3,9 @@ package com.nal.pdfcvbuilder.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nal.pdfcvbuilder.DTOs.UserRequest;
 import com.nal.pdfcvbuilder.DTOs.UserResponse;
-import com.nal.pdfcvbuilder.entities.CVData;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.ResourceAlreadyExistsException;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.UserNotFoundException;
-import com.nal.pdfcvbuilder.services.ImageService;
+import com.nal.pdfcvbuilder.services.UserImageService;
 import com.nal.pdfcvbuilder.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ class UserControllerIntegrationTest {
     private UserService userService;
 
     @MockBean
-    private ImageService imageService;
+    private UserImageService userImageService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -205,7 +204,6 @@ class UserControllerIntegrationTest {
                 .mobile("123456789")
                 .image("image.png")
                 .years(5)
-                .data(new CVData())
                 .build();
     }
 }
