@@ -21,5 +21,5 @@ public class UserRequest {
     private String mobile;
     private String image;
     private int years;
-    private ResumeData data;
+    private ResumeRequest data;
 }

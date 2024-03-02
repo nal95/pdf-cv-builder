@@ -1,13 +1,14 @@
 package com.nal.pdfcvbuilder.DTOs;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class UserResponse {
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
