@@ -82,10 +82,10 @@ class UserControllerIntegrationTest {
         // Then
         response.andDo(print())
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.body.type", is("about:blank")))
-                .andExpect(jsonPath("$.body.title", is("Conflict")))
-                .andExpect(jsonPath("$.body.status", is(409)))
-                .andExpect(jsonPath("$.body.detail", is(conflictMessage)));
+                .andExpect(jsonPath("$.type", is("about:blank")))
+                .andExpect(jsonPath("$.title", is("Conflict")))
+                .andExpect(jsonPath("$.status", is(409)))
+                .andExpect(jsonPath("$.detail", is(conflictMessage)));
     }
 
     @Test
@@ -125,10 +125,10 @@ class UserControllerIntegrationTest {
         // Then
         response.andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.body.type", is("about:blank")))
-                .andExpect(jsonPath("$.body.title", is("Not Found")))
-                .andExpect(jsonPath("$.body.status", is(404)))
-                .andExpect(jsonPath("$.body.detail", is(notFoundMessage)));
+                .andExpect(jsonPath("$.type", is("about:blank")))
+                .andExpect(jsonPath("$.title", is("Not Found")))
+                .andExpect(jsonPath("$.status", is(404)))
+                .andExpect(jsonPath("$.detail", is(notFoundMessage)));
     }
 
     @Test
@@ -174,10 +174,10 @@ class UserControllerIntegrationTest {
         // Then
         response.andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.body.type", is("about:blank")))
-                .andExpect(jsonPath("$.body.title", is("Not Found")))
-                .andExpect(jsonPath("$.body.status", is(404)))
-                .andExpect(jsonPath("$.body.detail", is(notFoundMessage)));
+                .andExpect(jsonPath("$.type", is("about:blank")))
+                .andExpect(jsonPath("$.title", is("Not Found")))
+                .andExpect(jsonPath("$.status", is(404)))
+                .andExpect(jsonPath("$.detail", is(notFoundMessage)));
     }
 
     private UserResponse createUserResponse() {
