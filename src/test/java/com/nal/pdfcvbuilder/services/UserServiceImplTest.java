@@ -3,9 +3,11 @@ package com.nal.pdfcvbuilder.services;
 import com.nal.pdfcvbuilder.DTOs.UserRequest;
 import com.nal.pdfcvbuilder.DTOs.UserResponse;
 import com.nal.pdfcvbuilder.entities.User;
+import com.nal.pdfcvbuilder.helpers.Response;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.ResourceAlreadyExistsException;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.UserNotFoundException;
 import com.nal.pdfcvbuilder.repositories.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,31 +40,42 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
+    Response responseHelper = null;
+
+    @BeforeEach
+    void Init() {
+        responseHelper = new Response();
+    }
+
     @Test
     public void createUser_WithNonExistingEmail_ShouldCreateUser() {
         // Given
-        UserRequest userRequest = createUserRequest();
-        User user = createUser();
+        User expectedUser = responseHelper.getUser();
+        UserRequest userRequest = responseHelper.getUserRequest();
 
         // When -  action or the behaviour that we are going test
         given(userRepository.existsByEmail(userRequest.getEmail())).willReturn(false);
-        given(modelMapper.map(any(UserRequest.class), eq(User.class))).willReturn(user);
-        given(modelMapper.map(any(User.class), eq(UserResponse.class))).willReturn(createUserResponse());
-
-        user.setId(1L);
-        given(userRepository.save(any(User.class))).willReturn(user);
+        given(modelMapper.map(any(UserRequest.class), eq(User.class))).willReturn(expectedUser);
+        given(modelMapper.map(any(User.class), eq(UserResponse.class))).willReturn(responseHelper.getUserResponse());
+        given(userRepository.save(any(User.class))).willReturn(expectedUser);
 
         UserResponse createdUser = userService.createUser(userRequest);
 
         // Then
-        verify(userRepository, times(1)).save(any());
+        verify(userRepository, times(1)).save(any(User.class));
         assertThat(createdUser).isNotNull();
+        assertEquals(expectedUser.getId(), createdUser.getId());
+        assertEquals(expectedUser.getFirstName(), createdUser.getFirstName());
+        assertEquals(expectedUser.getLastName(), createdUser.getLastName());
+        assertEquals(expectedUser.getEmail(), createdUser.getEmail());
+        assertEquals(expectedUser.getImage(), createdUser.getImage());
+        assertEquals(expectedUser.getProfession(), createdUser.getProfession());
     }
 
     @Test()
     public void createUser_WithExistingEmail_ShouldThrowException() {
         // Given
-        UserRequest userRequest = createUserRequest();
+        UserRequest userRequest = responseHelper.getUserRequest();
         String exceptionMessage = "User with email " + userRequest.getEmail() + " already exists";
 
         // When -  action or the behaviour that we are going test
@@ -80,19 +93,24 @@ class UserServiceImplTest {
     public void getUsers_ShouldReturnListOfUserResponses() {
 
         //Given
-        User user = createUser();
-        user.setId(1L);
+        User user = responseHelper.getUser();
 
         // When -  action or the behaviour that we are going test
         given(userRepository.findAll()).willReturn(Collections.singletonList(user));
-        given(modelMapper.map(any(User.class), eq(UserResponse.class))).willReturn(createUserResponse());
+        given(modelMapper.map(any(User.class), eq(UserResponse.class))).willReturn(responseHelper.getUserResponse());
 
         List<UserResponse> userList = userService.getUsers();
 
         // Then
+        verify(userRepository, times(1)).findAll();
         assertThat(userList).isNotNull();
         assertThat(userList).hasSize(1);
+        assertEquals(user.getId(), userList.get(0).getId());
+        assertEquals(user.getFirstName(), userList.get(0).getFirstName());
+        assertEquals(user.getLastName(), userList.get(0).getLastName());
         assertEquals(user.getEmail(), userList.get(0).getEmail());
+        assertEquals(user.getImage(), userList.get(0).getImage());
+        assertEquals(user.getProfession(), userList.get(0).getProfession());
     }
 
     @Test
@@ -103,41 +121,70 @@ class UserServiceImplTest {
         List<UserResponse> userList = userService.getUsers();
 
         // Then
+        verify(userRepository, times(1)).findAll();
         assertThat(userList).isEmpty();
         assertThat(userList).hasSize(0);
+    }
+
+
+    @Test
+    public void getUser_ShouldReturnUserResponse() {
+
+        //Given
+        User expectedUser = responseHelper.getUser();
+
+        // When -  action or the behaviour that we are going test
+        given(userRepository.findById(expectedUser.getId())).willReturn(Optional.of(expectedUser));
+        given(modelMapper.map(any(User.class), eq(UserResponse.class))).willReturn(responseHelper.getUserResponse());
+
+        UserResponse createdUser = userService.getUser(expectedUser.getId());
+
+        // Then
+        verify(userRepository, times(1)).findById(expectedUser.getId());
+        assertThat(createdUser).isNotNull();
+        assertEquals(expectedUser.getId(), createdUser.getId());
+        assertEquals(expectedUser.getFirstName(), createdUser.getFirstName());
+        assertEquals(expectedUser.getLastName(), createdUser.getLastName());
+        assertEquals(expectedUser.getEmail(), createdUser.getEmail());
+        assertEquals(expectedUser.getImage(), createdUser.getImage());
+        assertEquals(expectedUser.getProfession(), createdUser.getProfession());
     }
 
     @Test
     public void updateUser_WithExistingUserId_ShouldUpdateUser() {
         // Given
-        UserRequest userRequest = createUserRequest();
-        userRequest.setEmail("new@email.de");
-        userRequest.setFirstName("Jack");
-        userRequest.setLastName("Brown");
-        User user = createUser();
-        UserResponse userResponse = createUserResponse();
+        User expectedUser = responseHelper.getUser();
+        expectedUser.setEmail("new@email.de");
+        expectedUser.setFirstName("Jack");
+        expectedUser.setLastName("Brown");
+        UserResponse userResponse = responseHelper.getUserResponse();
         userResponse.setEmail("new@email.de");
         userResponse.setFirstName("Jack");
         userResponse.setLastName("Brown");
 
         // When -  action or the behaviour that we are going test
-        given(userRepository.findById(1L)).willReturn(Optional.of(user));
-        given(userRepository.save(user)).willReturn(user);
+        given(userRepository.findById(1L)).willReturn(Optional.of(new User()));
+        given(userRepository.save(any(User.class))).willReturn(expectedUser);
         given(modelMapper.map(any(User.class), eq(UserResponse.class))).willReturn(userResponse);
 
-        UserResponse updatedUser = userService.updateUser(1L, userRequest);
+        UserResponse updatedUser = userService.updateUser(1L, new UserRequest());
 
         // Then
+        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).save(any(User.class));
         assertThat(updatedUser).isNotNull();
-        assertThat(updatedUser.getEmail()).isEqualTo("new@email.de");
-        assertThat(updatedUser.getFirstName()).isEqualTo("Jack");
-        assertThat(updatedUser.getLastName()).isEqualTo("Brown");
+        assertEquals(expectedUser.getId(), updatedUser.getId());
+        assertEquals(expectedUser.getFirstName(), updatedUser.getFirstName());
+        assertEquals(expectedUser.getLastName(), updatedUser.getLastName());
+        assertEquals(expectedUser.getEmail(), updatedUser.getEmail());
+        assertEquals(expectedUser.getImage(), updatedUser.getImage());
+        assertEquals(expectedUser.getProfession(), updatedUser.getProfession());
     }
 
     @Test()
     public void updateUser_WithNonExistingUserId_ShouldThrowException() {
         // Given
-        UserRequest userRequest = createUserRequest();
+        UserRequest userRequest = responseHelper.getUserRequest();
         long userId = 1L;
         String exceptionMessage = "User with ID " + userId + " not found";
 
@@ -146,6 +193,7 @@ class UserServiceImplTest {
 
         // Then
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> userService.updateUser(userId, userRequest));
+        verify(userRepository, times(1)).findById(userId);
         assertEquals(exceptionMessage, exception.getMessage());
     }
 
@@ -159,41 +207,4 @@ class UserServiceImplTest {
         // Then
         verify(userRepository, times(1)).deleteById(1L);
     }
-
-
-    private User createUser() {
-        return User.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .build();
-    }
-
-    private UserResponse createUserResponse() {
-        return UserResponse.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .profession("Developer")
-                .image("image.png")
-                .build();
-    }
-
-    private UserRequest createUserRequest() {
-        return UserRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .password("password")
-                .email("john.doe@example.com")
-                .nationality("US")
-                .location("New York")
-                .summary("Summary")
-                .objectives("Objectives")
-                .profession("Developer")
-                .mobile("123456789")
-                .image("image.png")
-                .years(5)
-                .build();
-    }
-
 }

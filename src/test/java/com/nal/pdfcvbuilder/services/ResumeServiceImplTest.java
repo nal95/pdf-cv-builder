@@ -7,8 +7,10 @@ import com.nal.pdfcvbuilder.entities.Education;
 import com.nal.pdfcvbuilder.entities.Resume;
 import com.nal.pdfcvbuilder.entities.ResumeData;
 import com.nal.pdfcvbuilder.entities.User;
+import com.nal.pdfcvbuilder.helpers.Response;
 import com.nal.pdfcvbuilder.repositories.ResumeRepository;
 import com.nal.pdfcvbuilder.repositories.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,12 +45,19 @@ class ResumeServiceImplTest {
     @InjectMocks
     private ResumeServiceImpl service;
 
+    Response responseHelper = null;
+
+    @BeforeEach
+    void Init() {
+        responseHelper = new Response();
+    }
+
     @Test
     void createResume_WithExistingUser_ShouldCreateResume() {
         // Given
-        Resume resume = createResume();
-        ResumeRequest request = createResumeRequest();
-        ResumeResponse expectedResumeResponse = createResumeResponse();
+        Resume resume = responseHelper.getResume();
+        ResumeRequest request = responseHelper.getResumeRequest();
+        ResumeResponse expectedResumeResponse = responseHelper.getResumeResponse();
 
         // When -  action or the behaviour that we are going test
         given(userRepository.findById(resume.getUser().getId())).willReturn(Optional.of(resume.getUser()));
@@ -61,16 +70,16 @@ class ResumeServiceImplTest {
         // Then
         verify(repository, times(1)).save(any(Resume.class));
         assertThat(actuelResumeResponse).isNotNull();
-        assertEquals(expectedResumeResponse.getData().getEducations(), actuelResumeResponse.getData().getEducations());
-        assertEquals(actuelResumeResponse.getData().getEducations().size(),1);
-        assertEquals(actuelResumeResponse.getUser().getId(),1L);
+        assertEquals(expectedResumeResponse.getResumeData().getEducations(), actuelResumeResponse.getResumeData().getEducations());
+        assertEquals(actuelResumeResponse.getResumeData().getEducations().size(), 1);
+        assertEquals(actuelResumeResponse.getUserResponse().getId(), 1L);
     }
 
     @Test
     void getResume() {
         // Given
-        Resume resume = createResume();
-        ResumeResponse expectedResumeResponse = createResumeResponse();
+        Resume resume = responseHelper.getResume();
+        ResumeResponse expectedResumeResponse = responseHelper.getResumeResponse();
 
         // When -  action or the behaviour that we are going test
         given(userRepository.findById(resume.getUser().getId())).willReturn(Optional.of(resume.getUser()));
@@ -82,44 +91,49 @@ class ResumeServiceImplTest {
         // Then
         verify(repository, times(1)).findResumeByUser(resume.getUser());
         assertThat(actuelResumeResponse).isNotNull();
-        assertEquals(expectedResumeResponse.getData().getEducations(), actuelResumeResponse.getData().getEducations());
-        assertEquals(actuelResumeResponse.getData().getEducations().size(),1);
-        assertEquals(actuelResumeResponse.getUser().getId(),1L);
+        assertEquals(expectedResumeResponse.getResumeData().getEducations(), actuelResumeResponse.getResumeData().getEducations());
+        assertEquals(actuelResumeResponse.getResumeData().getEducations().size(), 1);
+        assertEquals(actuelResumeResponse.getUserResponse().getId(), 1L);
     }
 
     @Test
     void updateResume() {
         // Given
-        Resume resume = createResume();
-        ResumeRequest request = createResumeRequest();
-        Education e = new Education("University of XYZ","Computer Science","Master", LocalDate.of(2020, 1, 1), LocalDate.of(2023,1,1), 4, "Graduated with honors");
-        ResumeData data = ResumeData.builder().educations(Set.of(e)).build();
-        ResumeResponse expectedUpdatedResumeResponse = createResumeResponse();
-        expectedUpdatedResumeResponse.setData(data);
+        ResumeRequest request = new ResumeRequest();
+        Education e = new Education("University of XYZ", "Computer Science", "Master", LocalDate.of(2020, 1, 1), LocalDate.of(2023, 1, 1), 4, "Graduated with honors");
+        ResumeData data = responseHelper.getResumeData();
+        data.setEducations(Set.of(e));
+
+        Resume resume = responseHelper.getResume();
+
+        ResumeResponse expectedUpdatedResumeResponse = ResumeResponse.builder()
+                .userResponse(UserResponse.builder().id(1L).build())
+                .resumeData(data).build();
+        expectedUpdatedResumeResponse.setResumeData(data);
 
         // When -  action or the behaviour that we are going test
-        given(userRepository.findById(resume.getUser().getId())).willReturn(Optional.of(resume.getUser()));
+        given(userRepository.findById(1L)).willReturn(Optional.of(resume.getUser()));
         given(repository.findResumeByUser(any(User.class))).willReturn(resume);
-        given(modelMapper.map(any(ResumeRequest.class), eq(ResumeData.class))).willReturn(request.getData());
 
-        request.setData(data);
+        resume.setData(data);
+        given(modelMapper.map(any(ResumeRequest.class), eq(ResumeData.class))).willReturn(resume.getData());
         given(repository.save(any(Resume.class))).willReturn(resume);
         given(modelMapper.map(any(Resume.class), eq(ResumeResponse.class))).willReturn(expectedUpdatedResumeResponse);
 
-        ResumeResponse actuelResumeResponse = service.updateResume(resume.getUser().getId(), request);
+        ResumeResponse actuelResumeResponse = service.updateResume(1L, request);
 
         // Then
         verify(repository, times(1)).save(any(Resume.class));
         assertThat(actuelResumeResponse).isNotNull();
-        assertEquals(expectedUpdatedResumeResponse.getData().getEducations(), actuelResumeResponse.getData().getEducations());
-        assertEquals(actuelResumeResponse.getData().getEducations().size(),1);
-        assertEquals(actuelResumeResponse.getUser().getId(),1L);
+        assertEquals(expectedUpdatedResumeResponse.getResumeData().getEducations(), actuelResumeResponse.getResumeData().getEducations());
+        assertEquals(actuelResumeResponse.getResumeData().getEducations().size(), 1);
+        assertEquals(actuelResumeResponse.getUserResponse().getId(), 1L);
     }
 
     @Test
     void deleteResume_WithExistingUser_ShouldPass() {
         // Given
-        Resume resume = createResume();
+        Resume resume = responseHelper.getResume();
 
         // When -  action or the behaviour that we are going test
         given(userRepository.findById(1L)).willReturn(Optional.of(resume.getUser()));
@@ -147,51 +161,4 @@ class ResumeServiceImplTest {
 //        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> service.updateResume(userId, request));
 //        assertEquals(exceptionMessage, exception.getMessage());
 //    }
-
-
-    private User createUser() {
-        return User.builder()
-                .id(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .build();
-    }
-
-    private UserResponse createUserResponse() {
-        return UserResponse.builder()
-                .id(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .profession("Developer")
-                .image("image.png")
-                .build();
-    }
-
-    private Resume createResume(){
-        return Resume.builder()
-                .id(1L)
-                .user(createUser())
-                .data(createResumeData())
-                .build();
-    }
-
-    private ResumeResponse createResumeResponse() {
-        return ResumeResponse.builder()
-                .user(createUserResponse())
-                .data(createResumeData())
-                .build();
-    }
-
-    private ResumeData createResumeData() {
-        Education e = new Education("University of XYZ","Computer Science","Bachelor's", LocalDate.of(2020, 1, 1), LocalDate.of(2024,1,1), 4, "Graduated with honors");
-        return ResumeData.builder()
-                .educations(Set.of(e))
-                .build();
-    }
-
-    private ResumeRequest createResumeRequest() {
-        return ResumeRequest.builder().data(createResumeData()).build();
-    }
 }

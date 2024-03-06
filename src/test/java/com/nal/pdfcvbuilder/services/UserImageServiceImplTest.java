@@ -1,7 +1,7 @@
 package com.nal.pdfcvbuilder.services;
 
-import com.nal.pdfcvbuilder.entities.User;
 import com.nal.pdfcvbuilder.entities.UserImageDetail;
+import com.nal.pdfcvbuilder.helpers.Response;
 import com.nal.pdfcvbuilder.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,17 +40,19 @@ class UserImageServiceImplTest {
     byte[] content = null;
     MockMultipartFile file = null;
     Path testPath = Paths.get(tempDir + "/" + testFilename);
+    Response responseHelper = null;
 
     @BeforeEach
     void Init() throws IOException {
         content = Files.readAllBytes(testPath);
         file = new MockMultipartFile("image", "test.png", "image/png", content);
+        responseHelper = new Response();
     }
 
     @Test
     public void saveImage_shouldSaveImageAndUpdateDatabase() throws IOException {
         // When
-        UserImageDetail detail = getUserImageDetail();
+        UserImageDetail detail = responseHelper.getImageDetail(tempDir);
         doReturn(detail).when(userImageService).getUserImageDetails(1L);
 
         // Call the method to test
@@ -79,12 +81,12 @@ class UserImageServiceImplTest {
     @Test
     public void getUserImageDetails_shouldReturnUserImageDetails() {
         // Given
-        Path path = Paths.get(tempDir,"");
-        UserImageDetail detailsExpected = getUserImageDetail();
+        Path path = Paths.get(tempDir, "");
+        UserImageDetail detailsExpected = responseHelper.getImageDetail(tempDir);
         detailsExpected.setImagePath(path);
 
         // When
-        when(repository.findById(1L)).thenReturn(Optional.of(getUser()));
+        when(repository.findById(1L)).thenReturn(Optional.of(responseHelper.getUser()));
         when(env.getProperty("app.image.base-path")).thenReturn(tempDir);
         when(env.getProperty("app.image.upload-path")).thenReturn("");
 
@@ -102,7 +104,7 @@ class UserImageServiceImplTest {
     @Test
     public void getUserProfileImage_shouldReturnUserProfileImage() throws IOException {
         // When
-        UserImageDetail detail = getUserImageDetail();
+        UserImageDetail detail = responseHelper.getImageDetail(tempDir);
         detail.setImageName("");
         detail.setImagePath(testPath);
 
@@ -116,21 +118,5 @@ class UserImageServiceImplTest {
 
         // Verify that the returned content matches the mocked content
         assertArrayEquals(content, userProfileImage);
-    }
-
-    private User getUser() {
-        return User.builder()
-                .id(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .build();
-    }
-
-    private UserImageDetail getUserImageDetail() {
-        return UserImageDetail.builder()
-                .imagePath(Paths.get(tempDir))
-                .imageName("John_Doe.jpeg")
-                .user(getUser())
-                .build();
     }
 }

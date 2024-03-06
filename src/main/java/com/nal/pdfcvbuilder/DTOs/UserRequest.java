@@ -1,13 +1,12 @@
 package com.nal.pdfcvbuilder.DTOs;
 
-import com.nal.pdfcvbuilder.entities.ResumeData;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRequest {
     private String firstName;
     private String lastName;

@@ -9,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResumeResponse {
-    private UserResponse user;
-    private ResumeData data;
+    private UserResponse userResponse;
+    private ResumeData resumeData;
 }
