@@ -35,7 +35,7 @@ class UserImageServiceImplTest {
     @InjectMocks
     private UserImageServiceImpl userImageService;
 
-    String tempDir = "src/main/resources/images";
+    String tempDir = "src/test/java/com/nal/pdfcvbuilder/resources/images";
     String testFilename = "test.png";
     byte[] content = null;
     MockMultipartFile file = null;
