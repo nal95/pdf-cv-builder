@@ -48,28 +48,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{userId}/profileImage")
-    public ResponseEntity<Object> getUserProfileImage(@PathVariable Long userId) {
-        try {
-            byte[] imageBytes = userImageService.getUserProfileImage(userId);
-
-            // Create a Resource object with the image bytes
-            ByteArrayResource resource = new ByteArrayResource(imageBytes);
-
-            return ResponseEntity.ok()
-                    .contentLength(imageBytes.length)
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .body(resource);
-
-        } catch (IOException | UserNotFoundException e) {
-            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND,
-                    (e instanceof IOException) ? "User image not found" : e.getMessage()
-            ).build();
-
-            return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.NOT_FOUND);
-        }
-    }
-
     @PutMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable Long userId, @RequestBody UserRequest userRequest) {
         try {
@@ -107,6 +85,7 @@ public class UserController {
         }
     }
 
+    // TODO: Test this
     @PostMapping("/{userId}/uploadImage")
     public ResponseEntity<Object> saveUserImage(@PathVariable Long userId, @RequestParam("file") MultipartFile file) {
         try {

@@ -14,4 +14,10 @@ public class UserResponse {
     private String email;
     private String profession;
     private String image;
+    private String nationality;
+    private String location;
+    private String summary;
+    private String objectives;
+    private String mobile;
+    private int years;
 }
