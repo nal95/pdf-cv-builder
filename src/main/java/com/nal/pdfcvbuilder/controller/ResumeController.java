@@ -19,6 +19,21 @@ public class ResumeController {
         this.service = service;
     }
 
+    @PostMapping("/{userId}")
+    public ResponseEntity<Object> createResume(@PathVariable Long userId, @RequestBody ResumeRequest data) {
+        try {
+
+            ResumeResponse resume = service.createResume(userId, data);
+            return new ResponseEntity<>(resume.getResumeData(), HttpStatus.CREATED);
+
+        } catch (UserNotFoundException e) {
+            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND,
+                    e.getMessage()).build();
+
+            return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getResume(@PathVariable Long userId) {
         try {
