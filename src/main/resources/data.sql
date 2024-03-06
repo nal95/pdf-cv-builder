@@ -44,7 +44,7 @@ VALUES (5,
         'Seeking challenging opportunities',
         'Software Engineer',
         '+1 123-456-7890',
-        'images/nal95.png');
+        'John_Doe.jpeg');
 
 -- Insert resume data
 INSERT INTO RESUMES (user_id, resume_data)

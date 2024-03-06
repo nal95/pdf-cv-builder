@@ -24,7 +24,7 @@ public class ResumeController {
         try {
 
             ResumeResponse resume = service.createResume(userId, data);
-            return new ResponseEntity<>(resume.getResumeData(), HttpStatus.CREATED);
+            return new ResponseEntity<>(resume, HttpStatus.CREATED);
 
         } catch (UserNotFoundException e) {
             ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND,
@@ -39,7 +39,7 @@ public class ResumeController {
         try {
 
             ResumeResponse resume = service.getResume(userId);
-            return new ResponseEntity<>(resume.getResumeData(), HttpStatus.OK);
+            return new ResponseEntity<>(resume, HttpStatus.OK);
 
         } catch (UserNotFoundException e) {
             ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND,
@@ -53,7 +53,7 @@ public class ResumeController {
     public ResponseEntity<Object> updateResume(@PathVariable Long userId, @RequestBody ResumeRequest data) {
         try {
             ResumeResponse resume = service.updateResume(userId, data);
-            return new ResponseEntity<>(resume.getResumeData(), HttpStatus.OK);
+            return new ResponseEntity<>(resume, HttpStatus.OK);
 
         } catch (UserNotFoundException e) {
             ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND,

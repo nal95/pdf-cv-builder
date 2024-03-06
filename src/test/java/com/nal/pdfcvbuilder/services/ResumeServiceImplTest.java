@@ -83,7 +83,7 @@ class ResumeServiceImplTest {
 
         // When -  action or the behaviour that we are going test
         given(userRepository.findById(resume.getUser().getId())).willReturn(Optional.of(resume.getUser()));
-        given(repository.findResumeByUser(any(User.class))).willReturn(resume);
+        given(repository.findResumeByUser(any(User.class))).willReturn(Optional.of(resume));
         given(modelMapper.map(any(Resume.class), eq(ResumeResponse.class))).willReturn(expectedResumeResponse);
 
         ResumeResponse actuelResumeResponse = service.getResume(resume.getUser().getId());
@@ -113,7 +113,7 @@ class ResumeServiceImplTest {
 
         // When -  action or the behaviour that we are going test
         given(userRepository.findById(1L)).willReturn(Optional.of(resume.getUser()));
-        given(repository.findResumeByUser(any(User.class))).willReturn(resume);
+        given(repository.findResumeByUser(any(User.class))).willReturn(Optional.of(resume));
 
         resume.setData(data);
         given(modelMapper.map(any(ResumeRequest.class), eq(ResumeData.class))).willReturn(resume.getData());
@@ -137,7 +137,7 @@ class ResumeServiceImplTest {
 
         // When -  action or the behaviour that we are going test
         given(userRepository.findById(1L)).willReturn(Optional.of(resume.getUser()));
-        given(repository.findResumeByUser(resume.getUser())).willReturn(resume);
+        given(repository.findResumeByUser(resume.getUser())).willReturn(Optional.of(resume));
         doNothing().when(repository).delete(any(Resume.class));
 
         service.deleteResume(1L);

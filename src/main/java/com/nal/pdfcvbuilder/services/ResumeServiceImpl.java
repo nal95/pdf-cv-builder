@@ -46,7 +46,9 @@ public class ResumeServiceImpl implements ResumeService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("User with ID " + userId + " not found"));
 
-        return modelMapper.map(repository.findResumeByUser(user), ResumeResponse.class);
+        Resume resume = repository.findResumeByUser(user).orElse(new Resume());
+
+        return modelMapper.map(resume, ResumeResponse.class);
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ResumeServiceImpl implements ResumeService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("User with ID " + userId + " not found"));
 
-        Resume resume = repository.findResumeByUser(user);
+        Resume resume = repository.findResumeByUser(user).orElse(new Resume());
 
         resume.setData(modelMapper.map(data, ResumeData.class));
 
@@ -70,7 +72,7 @@ public class ResumeServiceImpl implements ResumeService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("User with ID " + userId + " not found"));
 
-        Resume resume = repository.findResumeByUser(user);
+        Resume resume = repository.findResumeByUser(user).orElse(new Resume());
 
         repository.delete(resume);
     }

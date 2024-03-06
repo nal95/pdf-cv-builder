@@ -61,7 +61,7 @@ class ResumeControllerIntegrationTest {
         // Then
         response.andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedResumeResponse.getResumeData())));
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedResumeResponse)));
     }
 
     @Test
@@ -101,7 +101,7 @@ class ResumeControllerIntegrationTest {
         // Then
         response.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedResumeResponse.getResumeData())));
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedResumeResponse)));
 
     }
 
@@ -122,7 +122,7 @@ class ResumeControllerIntegrationTest {
         // Then
         response.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedResumeResponse.getResumeData())));
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedResumeResponse)));
     }
 
     @Test
