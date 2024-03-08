@@ -38,7 +38,7 @@ public class Response {
                 .nationality("US")
                 .location("New York")
                 .summary("Summary")
-                .objectives("Objectives")
+                .title("B. Eng.")
                 .profession("Developer")
                 .mobile("123456789")
                 .image("image.png")
@@ -91,7 +91,7 @@ public class Response {
                 .nationality("US")
                 .location("New York")
                 .summary("Summary")
-                .objectives("Objectives")
+                .title("Objectives")
                 .profession("Developer")
                 .mobile("123456789")
                 .image("image.png")
@@ -147,7 +147,7 @@ public class Response {
     }
 
     private ResumeData createResumeData() {
-        Network n = new Network("LINKEDIN", "https://linkedin.com/in/johndoe", "John Doe");
+        Network n = new Network("LINKEDIN", "https://linkedin.com/in/johndoe");
         Education e = new Education("University of XYZ", "Computer Science", "Bachelor's", LocalDate.of(2020, 1, 1), LocalDate.of(2024, 1, 1), 4, "Graduated with honors");
         WorkExperience w = new WorkExperience("ABC Inc.", "New York", "https://abcinc.com", "Software Engineer", LocalDate.of(2024, 2, 1), LocalDate.of(2025, 2, 1), 1, "Developed cutting-edge software");
         TechnicalExperience t = new TechnicalExperience("PROGRAMMING", Set.of(Detail.builder().name("java").level(5).build(), Detail.builder().name("JavaScript").level(4).build()));
@@ -159,6 +159,8 @@ public class Response {
                 .tools(Set.of("Git", "Jira", "Webpack", "TDD", "MVC"))
                 .methodologies(Set.of("Agile", "Scrum"))
                 .skills(Set.of("SQL", "Firebase", "Algorithm"))
+                .hobbiesAndInterest(Set.of("Sport", "Travel"))
+                .trainingsAndCertifications(Set.of("Google Cloud", "Clean Code"))
                 .build();
 
     }

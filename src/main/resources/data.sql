@@ -12,7 +12,7 @@ create table users
     location                  varchar(255),
     mobile_phone_number       varchar(255),
     nationality               varchar(255),
-    objectives                varchar(255),
+    title                     varchar(255),
     password                  varchar(255),
     profession                varchar(255),
     summary                   varchar(255),
@@ -32,7 +32,7 @@ create table resumes
 
 -- Insert user data
 INSERT INTO USERS (relevant_experience_years, first_name, last_name, password, email, nationality, location, summary,
-                   objectives, profession, mobile_phone_number, image_path)
+                   title, profession, mobile_phone_number, image_path)
 VALUES (5,
         'John',
         'Doe',
@@ -41,7 +41,7 @@ VALUES (5,
         'US',
         'New York',
         'Experienced software engineer',
-        'Seeking challenging opportunities',
+        'B. Eng.',
         'Software Engineer',
         '+1 123-456-7890',
         'John_Doe.jpeg');
@@ -53,14 +53,12 @@ VALUES ((SELECT id FROM USERS WHERE email = 'john.doe@example.com'),
         '{
           "networks": [
             {
-              "option": "LINKEDIN",
-              "link": "https://linkedin.com/in/johndoe",
-              "referenceName": "John Doe"
+              "referenceName": "LINKEDIN",
+              "link": "https://linkedin.com/in/johndoe"
             },
             {
-              "option": "GIT",
-              "link": "https://github.com/johndoe",
-              "referenceName": "johndoe"
+              "referenceName": "GIT",
+              "link": "https://github.com/johndoe"
             }
           ],
           "educations": [
@@ -116,5 +114,16 @@ VALUES ((SELECT id FROM USERS WHERE email = 'john.doe@example.com'),
             "SQL",
             "Firebase",
             "Algorithm"
+          ],
+          "hobbiesAndInterest": [
+            "Sport",
+            "Reading",
+            "Playing the Piano",
+            "DIY (Do It Yourself)",
+            "Travel"
+          ],
+          "trainingsAndCertifications": [
+            "Google Cloud",
+            "Clean Code"
           ]
         }' FORMAT JSON);

@@ -17,7 +17,7 @@ public class UserResponse {
     private String nationality;
     private String location;
     private String summary;
-    private String objectives;
+    private String title;
     private String mobile;
     private int years;
 }

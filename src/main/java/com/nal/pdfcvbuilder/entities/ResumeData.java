@@ -21,4 +21,6 @@ public class ResumeData implements Serializable {
     private Set<String> tools;
     private Set<String> methodologies;
     private Set<String> skills;
+    private Set<String> hobbiesAndInterest;
+    private Set<String> trainingsAndCertifications;
 }

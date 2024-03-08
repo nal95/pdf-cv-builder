@@ -25,7 +25,7 @@ public class User {
     private String nationality;
     private String location;
     private String summary;
-    private String objectives;
+    private String title;
     private String profession;
 
     @Column(name = "mobile_phone_number")

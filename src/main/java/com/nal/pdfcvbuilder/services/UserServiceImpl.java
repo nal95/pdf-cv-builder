@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         existedUser.setNationality(updatedUserRequest.getNationality());
         existedUser.setLocation(updatedUserRequest.getLocation());
         existedUser.setSummary(updatedUserRequest.getSummary());
-        existedUser.setObjectives(updatedUserRequest.getObjectives());
+        existedUser.setTitle(updatedUserRequest.getTitle());
         existedUser.setProfession(updatedUserRequest.getProfession());
         existedUser.setMobile(updatedUserRequest.getMobile());
         existedUser.setImage(updatedUserRequest.getImage());
