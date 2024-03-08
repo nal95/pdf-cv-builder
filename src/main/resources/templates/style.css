@@ -1,0 +1,46 @@
+/*
+
+/* Ajoutez ces styles pour personnaliser la couleur des bordures */
+.summary {
+    background-color: rgb(233, 233, 227);
+}
+
+.education {
+    background-color: rgb(233, 233, 227);
+}
+
+.technical-experiences {
+    background-color: rgb(233, 233, 227);
+}
+
+.technical-experiences .table{
+    background-color: rgb(233, 233, 227);
+}
+
+.hobbies {
+    background-color: rgb(233, 233, 227);
+}
+
+.personal-info {
+    /* background-color: rgb(221, 214, 216); */
+}
+
+.work-experiences {
+    /* background-color: rgb(221, 214, 216); */
+}
+
+.skills {
+    /* background-color: rgb(221, 214, 216); */
+}
+
+.tools {
+    /* background-color: rgb(221, 214, 216); */
+}
+
+.methodology {
+    /* background-color: rgb(221, 214, 216); */
+}
+
+.trainings-certifications {
+    /* background-color: rgb(221, 214, 216); */
+}

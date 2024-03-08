@@ -12,10 +12,13 @@ spring:
     console:
       enabled: true
 
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+
 server:
   servlet:
     context-path: /api/v1/pdf-cv
-
 app:
   image:
     base-path: src/main/resources/
