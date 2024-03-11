@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -20,8 +21,8 @@ public class WorkExperience implements Serializable {
     private String companyCity;
     private String companyLink;
     private String occupiedPosition;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private int duration;
     private String summary;
 }

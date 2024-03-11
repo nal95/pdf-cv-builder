@@ -4,9 +4,11 @@ import com.nal.pdfcvbuilder.DTOs.UserRequest;
 import com.nal.pdfcvbuilder.DTOs.UserResponse;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.ResourceAlreadyExistsException;
 import com.nal.pdfcvbuilder.pdfCvBuilderExceptions.UserNotFoundException;
-import com.nal.pdfcvbuilder.services.ImageService;
+import com.nal.pdfcvbuilder.services.UserImageService;
 import com.nal.pdfcvbuilder.services.UserService;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +22,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService service;
-    private final ImageService imageService;
+    private final UserImageService userImageService;
 
-    public UserController(UserService service, ImageService imageService) {
+    public UserController(UserService service, UserImageService userImageService) {
         this.service = service;
-        this.imageService = imageService;
+        this.userImageService = userImageService;
     }
 
     @GetMapping
@@ -42,7 +44,7 @@ public class UserController {
             ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND,
                     e.getMessage()).build();
 
-            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -56,27 +58,17 @@ public class UserController {
             ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.NOT_FOUND,
                     e.getMessage()).build();
 
-            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Object> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long userId) {
         try {
-            if (service.deleteUser(userId)) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else {
-                String message = "User with ID " + userId + " not found";
-
-                ErrorResponse errorResponse = ErrorResponse.builder(new UserNotFoundException(message),
-                        HttpStatus.NOT_FOUND, "User not found").build();
-
-                return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-            }
+            service.deleteUser(userId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()).build();
-
-            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -89,24 +81,36 @@ public class UserController {
         } catch (ResourceAlreadyExistsException e) {
             ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.CONFLICT, e.getMessage()).build();
 
-            return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+            return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.CONFLICT);
         }
     }
 
-    @PostMapping("/uploadImage")
-    public ResponseEntity<Object> handleImageUpload(@RequestParam("file") MultipartFile file) {
+    // TODO: Test this
+    @PostMapping("/{userId}/uploadImage")
+    public ResponseEntity<Object> saveUserImage(@PathVariable Long userId, @RequestParam("file") MultipartFile file) {
         try {
-            String imagePath = imageService.saveImage(file);
-            // Save imagePath in the user entity and update the database
-            // ...
-            return ResponseEntity.ok("{'message':'Image uploaded successfully', 'imagePath':'imagePath'}");
+            byte[] imageBytes = userImageService.saveImage(file, userId);
 
-        } catch (IOException e) {
-            String SAVING_IMAGE_ERROR_MESSAGE = "Error saving image";
-            ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.INTERNAL_SERVER_ERROR,
-                    SAVING_IMAGE_ERROR_MESSAGE).build();
+            // Create a Resource object with the image bytes
+            ByteArrayResource resource = new ByteArrayResource(imageBytes);
 
-            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.ok()
+                    .contentLength(imageBytes.length)
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(resource);
+
+        } catch (IOException | UserNotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            String exceptionMessage = e.getMessage();
+
+            if(e instanceof IOException) {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                exceptionMessage = "Internal Error by saving the image";
+            }
+
+            ErrorResponse errorResponse = ErrorResponse.builder(e, status, exceptionMessage).build();
+
+            return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.NOT_FOUND);
         }
     }
 }

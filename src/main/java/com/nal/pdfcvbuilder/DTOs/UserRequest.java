@@ -1,13 +1,12 @@
 package com.nal.pdfcvbuilder.DTOs;
 
-import com.nal.pdfcvbuilder.entities.CVData;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRequest {
     private String firstName;
     private String lastName;
@@ -16,10 +15,10 @@ public class UserRequest {
     private String nationality;
     private String location;
     private String summary;
-    private String objectives;
+    private String title;
     private String profession;
     private String mobile;
     private String image;
     private int years;
-    private CVData data;
+    private ResumeRequest data;
 }

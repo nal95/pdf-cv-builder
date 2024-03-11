@@ -14,8 +14,7 @@ import java.io.Serializable;
 public class Network implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String option; //example: GIT, LINKEDIN, FACEBOOK, WEBSITE
-    private String link;
     private String referenceName;
+    private String link;
 }
 
