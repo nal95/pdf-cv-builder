@@ -23,3 +23,5 @@ app:
   image:
     base-path: src/main/resources/
     upload-path: images/
+  style:
+    base-path: src/main/resources/templates/
