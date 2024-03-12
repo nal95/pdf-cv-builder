@@ -45,8 +45,8 @@ public class UserImageServiceImpl implements UserImageService {
         return profileImageContent;
     }
 
-    @Override
-    public byte[] convertToProfileImage(MultipartFile file) throws IOException {
+
+    private byte[] convertToProfileImage(MultipartFile file) throws IOException {
         // Get BufferedImage from MultipartFile
         BufferedImage originalImage = ImageIO.read(file.getInputStream());
         BufferedImage jpegImage = convertToJpeg(originalImage);
@@ -63,7 +63,7 @@ public class UserImageServiceImpl implements UserImageService {
         return Files.readAllBytes(filePath);
     }
 
-    public UserImageDetail getUserImageDetails(Long userId) {
+    private UserImageDetail getUserImageDetails(Long userId) {
         User user = repository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("User with ID " + userId + " not found"));
 
@@ -82,7 +82,7 @@ public class UserImageServiceImpl implements UserImageService {
     }
 
 
-    public BufferedImage convertToJpeg(BufferedImage originalImage) {
+    private BufferedImage convertToJpeg(BufferedImage originalImage) {
         // Create a new BufferedImage with RGB type
         BufferedImage jpegImage = new BufferedImage(
                 originalImage.getWidth(),
@@ -97,7 +97,7 @@ public class UserImageServiceImpl implements UserImageService {
     }
 
 
-    public byte[] convertToByteArray(BufferedImage image) throws IOException {
+    private byte[] convertToByteArray(BufferedImage image) throws IOException {
         // Write the BufferedImage to a ByteArrayOutputStream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(image, "jpeg", byteArrayOutputStream);

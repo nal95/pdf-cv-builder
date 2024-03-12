@@ -36,9 +36,6 @@ class UserControllerIntegrationTest {
     @MockBean
     private UserService userService;
 
-    @MockBean
-    private UserImageService userImageService;
-
     @Autowired
     private ObjectMapper objectMapper;
 

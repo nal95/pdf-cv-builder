@@ -9,7 +9,5 @@ public interface UserImageService {
 
     byte[] saveImage(MultipartFile file, Long userId) throws IOException;
 
-    byte[] convertToProfileImage(MultipartFile file) throws IOException;
-
     byte[] getUserProfileImage(Long userId) throws IOException;
 }

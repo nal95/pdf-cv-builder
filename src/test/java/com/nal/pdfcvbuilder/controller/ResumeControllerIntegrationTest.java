@@ -37,7 +37,7 @@ class ResumeControllerIntegrationTest {
 
     Response responseHelper = null;
 
-    String url = "/users/resumes/{userId}";
+    String url = "/resumes/{userId}";
 
     @BeforeEach
     void Init() {

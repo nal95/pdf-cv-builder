@@ -10,7 +10,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users/resumes")
+@RequestMapping("/resumes")
 public class ResumeController {
 
     private final ResumeService service;
