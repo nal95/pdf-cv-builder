@@ -86,7 +86,7 @@ VALUES ((SELECT id FROM USERS WHERE email = 'john.doe@example.com'),
           ],
           "technicalExperiences": [
             {
-              "topic": "PROGRAMMING",
+              "topic": "Programming Languages",
               "details": [
                 {
                   "name": "Java",
@@ -97,18 +97,30 @@ VALUES ((SELECT id FROM USERS WHERE email = 'john.doe@example.com'),
                   "level": 4
                 }
               ]
+            },
+            {
+              "topic": "Framework",
+              "details": [
+                {
+                  "name": "Spring Boot",
+                  "level": 5
+                },
+                {
+                  "name": "Angular",
+                  "level": 4
+                }
+              ]
             }
           ],
           "tools": [
             "Git",
-            "Jira",
-            "Webpack",
-            "TDD",
-            "MVC"
+            "Jira"
           ],
           "methodologies": [
             "Agile",
-            "Scrum"
+            "Scrum",
+            "TDD",
+            "MVC"
           ],
           "skills": [
             "SQL",
